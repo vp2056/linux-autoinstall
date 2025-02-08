@@ -2,7 +2,7 @@
 autoinstall:
     version: 1
     identity:
-        realname: 'Dionatan Simioni'
+        realname: 'v'
         hostname: ubuntu-miner
         username: victor
         password: '12345@'
@@ -11,14 +11,10 @@ autoinstall:
         layout: br
     timezone: "America/Sao_Paulo"   
     packages:
-        - libreoffice
-        - gimp
         - git
         - wget
     snaps:
-        - name: spotify
-          channel: stable
-          classic: false
+        remove: true
     codecs:
         install: false
     drivers:
