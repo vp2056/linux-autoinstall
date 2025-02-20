@@ -2,8 +2,8 @@
 autoinstall:
     version: 1
     identity:
-        realname: 'v'
-        hostname: ubuntu-miner
+        realname: 'victor'
+        hostname: ubuntu-pc
         username: victor
         password: '12345@'
     locale: pt_BR.utf8
@@ -16,8 +16,8 @@ autoinstall:
     snaps:
         remove: true
     codecs:
-        install: false
+        install: true
     drivers:
-        install: false
+        install: true
     updates: all
     shutdown: reboot
