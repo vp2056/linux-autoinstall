@@ -1,23 +1,46 @@
 #cloud-config
 autoinstall:
-    version: 1
-    identity:
-        realname: 'victor'
-        hostname: ubuntu-pc
-        username: victor
-        password: '12345@'
-    locale: pt_BR.utf8
-    keyboard:
-        layout: br
-    timezone: "America/Sao_Paulo"   
-    packages:
-        - git
-        - wget
-    snaps:
-        remove: true
-    codecs:
-        install: true
-    drivers:
-        install: true
-    updates: all
-    shutdown: reboot
+  version: 1
+  identity:
+    realname: 'victor'
+    hostname: ubuntu-pc
+    username: victor
+    password: '12345@'
+  locale: pt_BR.utf8
+  keyboard:
+    layout: br
+  timezone: "America/Sao_Paulo"
+  packages:
+    - git
+    - wget
+    - gnome-software
+    - flatpak
+    - gnome-software-plugin-flatpak  # Add GNOME Software Flatpak plugin
+
+  late-commands:
+    # Remove Snap and Snap-related services
+    - "echo 'Removing snap...' >> /target/etc/motd"
+    - "chroot /target apt-get remove --purge snapd -y"
+    - "chroot /target apt-get autoremove -y"
+    - "chroot /target rm -rf /target/snap"
+    - "chroot /target systemctl disable snapd"
+    - "chroot /target systemctl stop snapd"
+    - "chroot /target systemctl mask snapd"
+    - "chroot /target rm -rf /home/ubuntu/snap"
+    
+    # Add Flathub repository for Flatpak
+    - "echo 'Adding Flathub repository for Flatpak...'"
+    - "chroot /target flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo"
+
+    # Install Google Chrome
+    - "echo 'Installing Google Chrome...'"
+    - "chroot /target wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome.deb"
+    - "chroot /target dpkg -i /tmp/google-chrome.deb || true"
+    - "chroot /target apt-get install -f -y"  # Fix any dependencies if necessary
+
+  codecs:
+    install: true
+  drivers:
+    install: true
+  updates: all
+  shutdown: reboot
