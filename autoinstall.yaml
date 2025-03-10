@@ -20,19 +20,14 @@ autoinstall:
       filesystem: vfat
       mount: /boot/efi
 
-    - size: 100GiB
+    - size: 232GiB
       type: ext4
       number: 2
       mount: /
-      
-    - size: 900GiB
-      type: ext4
-      number: 3
-      mount: /home
 
     - size: 8GiB
       type: swap
-      number: 4
+      number: 3
       mount: 
 
 
