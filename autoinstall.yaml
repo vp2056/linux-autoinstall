@@ -1,0 +1,44 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ubuntu-server-01
+    username: v
+    password: "$6$Aqhn6dBWnUMgeMML$zlVBxS3aoXbzE3n6HDAA6ZAbhyb9apaQg1I6kz5jme4JhiYGZUVv1anzrHL3AHxJJJLfDfu4NJD8jnZlrw1R2."
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+    version: 2
+  storage:
+    layout:
+      name: direct
+  packages:
+    - git
+    - wget
+    - gnome-software
+  late-commands:
+    # Remove snapd and related packages
+    - curtin in-target -- snap remove --purge gnome-3-38-2004
+    - curtin in-target -- snap remove --purge gtk-common-themes
+    - curtin in-target -- snap remove --purge core18
+    - curtin in-target -- snap remove --purge core20
+    - curtin in-target -- snap remove --purge snapd-desktop-integration
+    - curtin in-target -- snap remove --purge snapd
+    - curtin in-target -- apt purge snapd -y
+    - curtin in-target -- rm -rf /var/cache/snapd/
+    - curtin in-target -- rm -rf /var/lib/snapd/
+    # Google Chrome Installation
+    - curtin in-target -- wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+    - curtin in-target -- sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    - curtin in-target -- apt update
+    - curtin in-target -- apt install -y google-chrome-stable
+    # JDK and Maven Installation:
+    - curtin in-target -- apt update
+    - curtin in-target -- apt install -y openjdk-21-jdk maven
+    # VS Code Installation
+    - curtin in-target -- wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+    - curtin in-target -- install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+    - curtin in-target -- sh -c 'echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+    - curtin in-target -- apt update
+    - curtin in-target -- apt install -y code
+    - curtin in-target -- rm packages.microsoft.gpg
